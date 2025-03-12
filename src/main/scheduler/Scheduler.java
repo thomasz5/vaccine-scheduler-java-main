@@ -209,6 +209,7 @@ public class Scheduler {
             System.out.println("User already logged in.");
             return;
         }
+        // check 2: the length for tokens need to be exactly 3 to include all information (with the operation name)
         if (tokens.length != 3) {
             System.out.println("Login failed.");
             return;
@@ -287,7 +288,8 @@ public class Scheduler {
         } catch (SQLException e) {
             System.out.println("Error occurred when adding doses");
         }
-            table
+        // check 3: if getter returns null, it means that we need to create the vaccine and insert it into the Vaccines
+        //          table
         if (vaccine == null) {
             try {
                 vaccine = new Vaccine.VaccineBuilder(vaccineName, doses).build();
@@ -296,6 +298,7 @@ public class Scheduler {
                 System.out.println("Error occurred when adding doses");
             }
         } else {
+            // if the vaccine is not null, meaning that the vaccine already exists in our table
             try {
                 vaccine.increaseAvailableDoses(doses);
             } catch (SQLException e) {

@@ -23,12 +23,12 @@ CREATE TABLE Patients (
     Hash BLOB NOT NULL
 );
 CREATE TABLE Reservations (
-                                            reservation_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                            patient_username TEXT NOT NULL,
-                                            caregiver_username TEXT NOT NULL,
-                                            vaccine_name TEXT NOT NULL,
-                                            appointment_date TEXT NOT NULL,
-                                            FOREIGN KEY (patient_username) REFERENCES Patients(username),
+    reservation_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    patient_username TEXT NOT NULL,
+    caregiver_username TEXT NOT NULL,
+    vaccine_name TEXT NOT NULL,
+    appointment_date TEXT NOT NULL,
+    FOREIGN KEY (patient_username) REFERENCES Patients(username),
     FOREIGN KEY (caregiver_username) REFERENCES Caregivers(username),
     FOREIGN KEY (vaccine_name) REFERENCES Vaccines(vaccine_name)
     );
