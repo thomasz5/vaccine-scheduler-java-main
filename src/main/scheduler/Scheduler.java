@@ -99,12 +99,10 @@ public class Scheduler {
         }
         String username = tokens[1];
         String password = tokens[2];
-        // Check if username already exists in Patients table
         if (usernameExistsPatient(username)) {
             System.out.println("Username taken, try again");
             return;
         }
-        // Create a new patient
         byte[] salt = Util.generateSalt();
         byte[] hash = Util.generateHash(password, salt);
         try {
@@ -113,29 +111,26 @@ public class Scheduler {
             System.out.println("Created user " + username);
         } catch (SQLException e) {
             System.out.println("Create patient failed");
+            e.printStackTrace();
         }
     }
 
     private static void createCaregiver(String[] tokens) {
-        // create_caregiver <username> <password>
-        // check 1: the length for tokens need to be exactly 3 to include all information (with the operation name)
+
         if (tokens.length != 3) {
             System.out.println("Failed to create user.");
             return;
         }
         String username = tokens[1];
         String password = tokens[2];
-        // check 2: check if the username has been taken already
         if (usernameExistsCaregiver(username)) {
             System.out.println("Username taken, try again!");
             return;
         }
         byte[] salt = Util.generateSalt();
         byte[] hash = Util.generateHash(password, salt);
-        // create the caregiver
         try {
             Caregiver caregiver = new Caregiver.CaregiverBuilder(username, salt, hash).build(); 
-            // save to caregiver information to our database
             caregiver.saveToDB();
             System.out.println("Created user " + username);
         } catch (SQLException e) {
@@ -152,7 +147,6 @@ public class Scheduler {
             PreparedStatement statement = con.prepareStatement(selectUsername);
             statement.setString(1, username);
             ResultSet resultSet = statement.executeQuery();
-            // returns false if the cursor is not before the first record or if there are no rows in the ResultSet.
             return resultSet.isBeforeFirst();
         } catch (SQLException e) {
             System.out.println("Error occurred when checking username");
@@ -198,7 +192,7 @@ public class Scheduler {
             patient = new Patient.PatientGetter(username, password).get();
         } catch (SQLException e) {
             System.out.println("Login patient failed");
-            return;
+            e.printStackTrace();
         }
         if (patient == null) {
             System.out.println("Login patient failed");
@@ -210,13 +204,11 @@ public class Scheduler {
     }
 
     private static void loginCaregiver(String[] tokens) {
-        // login_caregiver <username> <password>
-        // check 1: if someone's already logged-in, they need to log out first
+
         if (currentCaregiver != null || currentPatient != null) {
             System.out.println("User already logged in.");
             return;
         }
-        // check 2: the length for tokens need to be exactly 3 to include all information (with the operation name)
         if (tokens.length != 3) {
             System.out.println("Login failed.");
             return;
@@ -295,8 +287,7 @@ public class Scheduler {
         } catch (SQLException e) {
             System.out.println("Error occurred when adding doses");
         }
-        // check 3: if getter returns null, it means that we need to create the vaccine and insert it into the Vaccines
-        //          table
+            table
         if (vaccine == null) {
             try {
                 vaccine = new Vaccine.VaccineBuilder(vaccineName, doses).build();
@@ -305,7 +296,6 @@ public class Scheduler {
                 System.out.println("Error occurred when adding doses");
             }
         } else {
-            // if the vaccine is not null, meaning that the vaccine already exists in our table
             try {
                 vaccine.increaseAvailableDoses(doses);
             } catch (SQLException e) {

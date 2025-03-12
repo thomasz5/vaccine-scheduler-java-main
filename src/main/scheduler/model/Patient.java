@@ -19,6 +19,12 @@ public class Patient {
         this.hash = builder.hash;
     }
 
+    private Patient(PatientGetter getter) {
+        this.username = getter.username;
+        this.salt = getter.salt;
+        this.hash = getter.hash;
+    }
+
     // Getters
     public String getUsername() {
         return username;
@@ -69,6 +75,9 @@ public class Patient {
         private final String password;
         private byte[] salt;
         private byte[] hash;
+
+
+
 
         public PatientGetter(String username, String password) {
             this.username = username;

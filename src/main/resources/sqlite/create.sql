@@ -17,10 +17,10 @@ CREATE TABLE Vaccines (
     PRIMARY KEY (Name)
 );
 
-CREATE TABLE IF Patients (
-                                        username TEXT PRIMARY KEY,
-                                        salt BLOB NOT NULL,
-                                        password_hash BLOB NOT NULL
+CREATE TABLE Patients (
+    Username TEXT PRIMARY KEY,
+    Salt BLOB NOT NULL,
+    Hash BLOB NOT NULL
 );
 CREATE TABLE Reservations (
                                             reservation_id INTEGER PRIMARY KEY AUTOINCREMENT,
