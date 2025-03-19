@@ -5,7 +5,12 @@ import scheduler.model.Caregiver;
 import scheduler.model.Patient;
 import scheduler.model.Vaccine;
 import scheduler.util.Util;
-
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,6 +25,29 @@ public class Scheduler {
     private static Patient currentPatient = null;
 
     public static void main(String[] args) {
+        ConnectionManager cm = new ConnectionManager();
+        Connection conn = cm.createConnection();
+        String sqlFilePath = Paths.get(
+                Paths.get("").toAbsolutePath().toString(),
+                "src", "main", "resources", "sqlite", "create.sql"
+        ).toString();
+        try {
+            Statement stmt = conn.createStatement();
+            // Query for tables in the database information schema
+            ResultSet rs = stmt.executeQuery("SELECT name FROM sqlite_master WHERE type='table';");
+            if (!rs.next()) {  // No tables exist
+                String sqlScript = new String(Files.readAllBytes(Paths.get(sqlFilePath)));
+                // Run create.sql script against the database
+                stmt.executeUpdate(sqlScript);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error initializing database tables: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Error: " + sqlFilePath + " not found.");
+        } finally {
+            cm.closeConnection();
+        }
+
         // printing greetings text
         System.out.println();
         System.out.println("Welcome to the COVID-19 Vaccine Reservation Scheduling Application!");
